@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Old Exam Papers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#eef2f7;--card:#fff;--ink:#14213d;--muted:#5b6b85;--line:#d3dbe8;--blue:#2d5bff;--mark:#ffd23f;--markink:#14213d;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1524;--card:#18203a;--ink:#eaf0ff;--muted:#9fb0d0;--line:#2a3558;--blue:#7d9bff;--mark:#ffd23f;--markink:#14213d}}
+:root[data-theme="dark"]{--bg:#0f1524;--card:#18203a;--ink:#eaf0ff;--muted:#9fb0d0;--line:#2a3558;--blue:#7d9bff;--mark:#ffd23f;--markink:#14213d}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:820px;margin:0 auto;padding:28px 16px 48px}
+h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:clamp(2rem,7vw,3.2rem);line-height:1.05;margin:0 0 8px;letter-spacing:-.02em}
+h1 span{background:linear-gradient(transparent 58%,var(--mark) 58%)}
+.sub{color:var(--muted);margin:0 0 22px;max-width:52ch}
+.search{width:100%;padding:13px 16px;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px}
+.search:focus{outline:3px solid var(--blue);outline-offset:1px;border-color:transparent}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:18px 0 0;padding:0 0 0;border-bottom:2px solid var(--line);scrollbar-width:thin}
+.tab{flex:0 0 auto;font:600 .95rem "Bricolage Grotesque",system-ui,sans-serif;color:var(--muted);background:transparent;border:2px solid transparent;border-bottom:0;border-radius:10px 10px 0 0;padding:10px 16px;cursor:pointer;margin-bottom:-2px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--card);color:var(--ink);border-color:var(--line);border-bottom:2px solid var(--card)}
+.tab:focus-visible,.dl:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.panel{background:var(--card);border:2px solid var(--line);border-top:0;border-radius:0 0 14px 14px;padding:8px 14px 14px}
+.note{color:var(--muted);font-size:.9rem;margin:10px 2px}
+details{border-bottom:1px solid var(--line)}
+details:last-child{border-bottom:0}
+summary{cursor:pointer;list-style:none;padding:14px 4px;display:flex;align-items:center;gap:12px;border-radius:8px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-size:1.4rem;color:var(--muted);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+.code{font:700 .8rem "Bricolage Grotesque",system-ui,sans-serif;background:var(--mark);color:var(--markink);border-radius:6px;padding:3px 8px;white-space:nowrap}
+.name{font-weight:600}
+.count{color:var(--muted);font-size:.85rem;white-space:nowrap}
+ul{list-style:none;margin:0 0 12px;padding:0 4px}
+li{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-top:6px;border:1px solid var(--line);border-radius:10px}
+li .t{flex:1;min-width:0}
+li .y{font-weight:600}
+li .k{color:var(--muted);font-size:.85rem}
+.dl{flex:0 0 auto;text-decoration:none;font-weight:700;font-size:.9rem;color:#fff;background:var(--blue);padding:9px 14px;border-radius:9px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dl{color:#0f1524}}
+:root[data-theme="dark"] .dl{color:#0f1524}
+.dl:hover{filter:brightness(1.1)}
+.empty{padding:28px 8px;text-align:center;color:var(--muted)}
+.hit{background:var(--mark);color:var(--markink);border-radius:3px}
+@media (max-width:480px){summary{flex-wrap:wrap}.count{order:3;width:100%;margin-left:0}}
+@media (prefers-reduced-motion:reduce){summary::after{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Old exam <span>papers</span></h1>
+  <p class="sub">Pick your semester, open a subject and download past question papers as PDF.</p>
+  <input id="q" class="search" type="search" placeholder="Search subject, code or year (e.g. 2023)" aria-label="Search papers" autocomplete="off">
+  <div class="tabs" id="tabs" role="tablist" aria-label="Semesters"></div>
+  <div class="panel" id="panel" role="tabpanel"></div>
+</div>
+
+<script>
+/* ============ EDIT YOUR DATA HERE ============
+   Each subject: c = code, n = name.
+   Option A (quick): y = list of years -> makes "Mid-sem" and "End-sem" papers,
+                     files expected at pdfs/<sem>/<CODE>-<year>-mid.pdf and -end.pdf
+   Option B (exact): p = [{t:"End-sem 2024", f:"pdfs/your-file.pdf"}, ...]
+*/
+const DATA = {
+  1: [],
+  2: [],
+  3: [
+    {c:"CS201", n:"MultiMedia",  p:[{t:"Nov 2025", f:"25742-BCA SEM-3 (NEP) NOVEMBER-2025.pdf"}]},
+    {c:"CS202", n:"Digital Logic Design", y:[2025,2024]},
+    {c:"MA201", n:"Discrete Mathematics", y:[2024,2023]}
+  ],
+  4: [],
+  5: [
+    {c:"CS301", n:"Computer Networks", y:[2025,2024]},
+    {c:"CS302", n:"Design and Analysis of Algorithms", y:[2025,2024,2023]},
+    {c:"CS303", n:"Software Engineering", y:[2024]}
+  ],
+  6: []
+};
+/* ============================================ */
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let sem = 1;
+
+function papersOf(sub, s){
+  if (sub.p) return sub.p.map(x => ({t:x.t, f:x.f}));
+  const out = [];
+  (sub.y || []).forEach(y => {
+    out.push({t:"End-sem " + y, f:`pdfs/sem${s}/${sub.c}-${y}-end.pdf`});
+    out.push({t:"Mid-sem " + y, f:`pdfs/sem${s}/${sub.c}-${y}-mid.pdf`});
+  });
+  return out;
+}
+function mark(text, q){
+  const t = esc(text);
+  if (!q) return t;
+  const i = text.toLowerCase().indexOf(q);
+  if (i < 0) return t;
+  return esc(text.slice(0,i)) + '<mark class="hit">' + esc(text.slice(i,i+q.length)) + '</mark>' + esc(text.slice(i+q.length));
+}
+function renderTabs(){
+  $("#tabs").innerHTML = Object.keys(DATA).map(s =>
+    `<button class="tab" role="tab" aria-selected="${!$("#q").value && +s===sem}" data-s="${s}">Semester ${s}</button>`).join("");
+}
+function render(){
+  const q = $("#q").value.trim().toLowerCase();
+  renderTabs();
+  let html = "", shown = 0;
+  const sems = q ? Object.keys(DATA) : [String(sem)];
+  sems.forEach(s => {
+    const subs = DATA[s].map(sub => {
+      const all = papersOf(sub, s);
+      const subjMatch = (sub.c + " " + sub.n).toLowerCase().includes(q);
+      const papers = q && !subjMatch ? all.filter(p => p.t.toLowerCase().includes(q)) : all;
+      return {sub, papers, s};
+    }).filter(x => x.papers.length);
+    if (!subs.length) return;
+    if (q) html += `<p class="note">Semester ${s}</p>`;
+    subs.forEach(({sub, papers}) => {
+      shown++;
+      html += `<details${q ? " open" : ""}><summary><span class="code">${mark(sub.c,q)}</span><span class="name">${mark(sub.n,q)}</span><span class="count">${papers.length} paper${papers.length>1?"s":""}</span></summary><ul>` +
+        papers.map(p => {
+          const [kind, year] = p.t.split(" ");
+          const file = p.f.split("/").pop();
+          return `<li><div class="t"><div class="y">${mark(p.t,q)}</div><div class="k">PDF</div></div><a class="dl" href="${esc(p.f)}" download="${esc(file)}" aria-label="Download ${esc(sub.n)} ${esc(p.t)}">Download</a></li>`;
+        }).join("") + `</ul></details>`;
+    });
+  });
+  $("#panel").innerHTML = shown ? html : `<div class="empty">No papers found${q ? ` for “${esc(q)}”` : " for this semester yet"}. Try a subject code or a different year.</div>`;
+}
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest(".tab"); if (!b) return;
+  sem = +b.dataset.s; $("#q").value = ""; render();
+});
+$("#q").addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
